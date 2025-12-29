@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+
+# Dataset
+dataset/images/
+dataset/labels/
+
+# System / IDE
+.vscode/
+.DS_Store
+Thumbs.db
