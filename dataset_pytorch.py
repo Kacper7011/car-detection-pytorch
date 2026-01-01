@@ -6,7 +6,6 @@ import os
 import xml.etree.ElementTree as ET
 
 
-
 class CarDataset(Dataset):
     def __init__(self, images_dir, labels_dir, split_file, transforms=None):
         self.images_dir = images_dir
@@ -19,17 +18,7 @@ class CarDataset(Dataset):
     def __len__(self):
         return len(self.images)
 
-    def __getitem__(self, idx):
-        img_name = self.images[idx]
-
-        img_path = os.path.join(self.images_dir, img_name)
-        xml_path = os.path.join(
-            self.labels_dir,
-            img_name.rsplit(".", 1)[0] + ".xml"
-        )
-
-        image = F.to_tensor(Image.open(img_path).convert("RGB"))
-
+    def _parse_xml(self, xml_path):
         boxes = []
         labels = []
 
@@ -44,14 +33,68 @@ class CarDataset(Dataset):
             ymax = int(bbox.find("ymax").text)
 
             boxes.append([xmin, ymin, xmax, ymax])
-            labels.append(1)  # 1 = car (0 = background)
+            labels.append(1)  # 1 = car
+
+        if len(boxes) == 0:
+            boxes = torch.zeros((0, 4), dtype=torch.float32)
+            labels = torch.zeros((0,), dtype=torch.int64)
+        else:
+            boxes = torch.tensor(boxes, dtype=torch.float32)
+            labels = torch.tensor(labels, dtype=torch.int64)
+
+        return boxes, labels
+
+    def __getitem__(self, idx):
+        img_name = self.images[idx]
+
+        img_path = os.path.join(self.images_dir, img_name)
+        xml_path = os.path.join(
+            self.labels_dir,
+            img_name.rsplit(".", 1)[0] + ".xml"
+        )
+
+        image = F.to_tensor(Image.open(img_path).convert("RGB"))
+
+        boxes, labels = self._parse_xml(xml_path)
 
         target = {
-            "boxes": torch.tensor(boxes, dtype=torch.float32),
-            "labels": torch.tensor(labels, dtype=torch.int64),
+            "boxes": boxes,
+            "labels": labels,
         }
 
         if self.transforms:
             image = self.transforms(image)
 
         return image, target
+
+
+class CarTrainDataset(CarDataset):
+    """
+    Dataset ONLY for training Faster R-CNN.
+    Filters out images without any objects.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.valid_indices = []
+        for i in range(len(self.images)):
+            img_name = self.images[i]
+            xml_path = os.path.join(
+                self.labels_dir,
+                img_name.rsplit(".", 1)[0] + ".xml"
+            )
+
+            tree = ET.parse(xml_path)
+            root = tree.getroot()
+
+            if len(root.findall("object")) > 0:
+                self.valid_indices.append(i)
+
+        print(f"[INFO] Train dataset size (with objects): {len(self.valid_indices)}")
+
+    def __len__(self):
+        return len(self.valid_indices)
+
+    def __getitem__(self, idx):
+        return super().__getitem__(self.valid_indices[idx])
