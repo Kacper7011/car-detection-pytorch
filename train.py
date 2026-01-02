@@ -6,7 +6,7 @@ from utils import collate_fn
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 NUM_CLASSES = 2  # background + car
-EPOCHS = 5
+EPOCHS = 7
 LR = 0.005
 
 # ======================

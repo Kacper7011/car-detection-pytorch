@@ -18,6 +18,12 @@ Projekt zaliczeniowy z zakresu detekcji obiektów graficznych.
 - Faster R-CNN MobileNet
 - Faster R-CNN ResNet50 (fine-tuned)
 
+## Model fine-tuned
+Ze względu na rozmiar pliku, wytrenowany model Faster R-CNN ResNet50 nie jest przechowywany bezpośrednio w repozytorium.  
+Plik z wagami modelu jest dostępny pod adresem:
+
+https://1drv.ms/f/c/f17a058064cc30a5/IgDjzZgmRuVfQqSY06xwSQyZATFQYUDsO7APtQxonGqvOHU?e=eZdMNK
+
 ## Instalacja zależności
 ```bash
 pip install -r requirements.txt
