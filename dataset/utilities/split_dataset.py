@@ -1,8 +1,14 @@
 import os
 import random
 
-IMG_DIR = "dataset/images"
-OUT_DIR = "dataset/splits"
+# katalog utilities
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# katalog DATASET
+DATASET_DIR = os.path.join(BASE_DIR, "..")
+
+IMG_DIR = os.path.join(DATASET_DIR, "images")
+OUT_DIR = os.path.join(DATASET_DIR, "splits")
 
 os.makedirs(OUT_DIR, exist_ok=True)
 
@@ -22,7 +28,8 @@ val   = images[int(0.7 * n):int(0.85 * n)]
 test  = images[int(0.85 * n):]
 
 def save(name, data):
-    with open(os.path.join(OUT_DIR, name), "w") as f:
+    path = os.path.join(OUT_DIR, name)
+    with open(path, "w", encoding="utf-8") as f:
         for x in data:
             f.write(x + "\n")
 

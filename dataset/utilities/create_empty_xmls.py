@@ -1,38 +1,58 @@
 import os
-from PIL import Image
 import xml.etree.ElementTree as ET
+from PIL import Image
 
-IMG_DIR = "dataset/images"
-LBL_DIR = "dataset/labels"
+# katalog utilities
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-os.makedirs(LBL_DIR, exist_ok=True)
+# katalog DATASET
+DATASET_DIR = os.path.join(BASE_DIR, "..")
 
-created = 0
+IMG_DIR = os.path.join(DATASET_DIR, "images")
+LBL_DIR = os.path.join(DATASET_DIR, "labels")
 
-for img_name in os.listdir(IMG_DIR):
-    if not img_name.lower().endswith((".png", ".jpg", ".jpeg")):
+errors = 0
+
+for img_name in sorted(os.listdir(IMG_DIR)):
+    if not img_name.lower().endswith(".png"):
         continue
 
-    xml_name = img_name.rsplit(".", 1)[0] + ".xml"
+    xml_name = img_name.replace(".png", ".xml")
     xml_path = os.path.join(LBL_DIR, xml_name)
 
-    if os.path.exists(xml_path):
-        continue  # XML już istnieje
+    if not os.path.exists(xml_path):
+        print(f"[BRAK XML] {img_name}")
+        errors += 1
+        continue
 
     img_path = os.path.join(IMG_DIR, img_name)
     with Image.open(img_path) as img:
-        width, height = img.size
+        w, h = img.size
 
-    annotation = ET.Element("annotation")
+    tree = ET.parse(xml_path)
+    root = tree.getroot()
 
-    size = ET.SubElement(annotation, "size")
-    ET.SubElement(size, "width").text = str(width)
-    ET.SubElement(size, "height").text = str(height)
-    ET.SubElement(size, "depth").text = "3"
+    for obj in root.findall("object"):
+        bbox = obj.find("bndbox")
+        if bbox is None:
+            print(f"[BRAK BND BOX] {img_name}")
+            errors += 1
+            continue
 
-    tree = ET.ElementTree(annotation)
-    tree.write(xml_path, encoding="utf-8", xml_declaration=True)
+        xmin = int(bbox.find("xmin").text)
+        ymin = int(bbox.find("ymin").text)
+        xmax = int(bbox.find("xmax").text)
+        ymax = int(bbox.find("ymax").text)
 
-    created += 1
+        if (
+            xmin < 0 or ymin < 0 or
+            xmax > w or ymax > h or
+            xmin >= xmax or ymin >= ymax
+        ):
+            print(f"[BŁĘDNY BOX] {img_name}")
+            errors += 1
 
-print(f"Utworzono {created} pustych plików XML.")
+if errors == 0:
+    print("Walidacja zakończona: brak błędów ✅")
+else:
+    print(f"Wykryto {errors} problemów ❌")

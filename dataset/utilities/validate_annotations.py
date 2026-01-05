@@ -1,42 +1,52 @@
 import os
-import xml.etree.ElementTree as ET
 from PIL import Image
+import xml.etree.ElementTree as ET
 
-IMG_DIR = "dataset/images"
-LBL_DIR = "dataset/labels"
+# katalog utilities
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-errors = 0
+# katalog DATASET
+DATASET_DIR = os.path.join(BASE_DIR, "..")
 
-for img_name in sorted(os.listdir(IMG_DIR)):
-    if not img_name.endswith(".png"):
+IMG_DIR = os.path.join(DATASET_DIR, "images")
+LBL_DIR = os.path.join(DATASET_DIR, "labels")
+
+os.makedirs(LBL_DIR, exist_ok=True)
+
+created = 0
+
+for img_name in os.listdir(IMG_DIR):
+    if not img_name.lower().endswith((".png", ".jpg", ".jpeg")):
         continue
 
-    xml_name = img_name.replace(".png", ".xml")
+    xml_name = img_name.rsplit(".", 1)[0] + ".xml"
     xml_path = os.path.join(LBL_DIR, xml_name)
 
-    if not os.path.exists(xml_path):
-        print(f"[BRAK XML] {img_name}")
-        errors += 1
-        continue
+    if os.path.exists(xml_path):
+        continue  # XML już istnieje
 
     img_path = os.path.join(IMG_DIR, img_name)
-    w, h = Image.open(img_path).size
+    with Image.open(img_path) as img:
+        width, height = img.size
+        depth = len(img.getbands())
 
-    tree = ET.parse(xml_path)
-    root = tree.getroot()
+    # --- Pascal VOC ---
+    annotation = ET.Element("annotation")
 
-    for obj in root.findall("object"):
-        bbox = obj.find("bndbox")
-        xmin = int(bbox.find("xmin").text)
-        ymin = int(bbox.find("ymin").text)
-        xmax = int(bbox.find("xmax").text)
-        ymax = int(bbox.find("ymax").text)
+    ET.SubElement(annotation, "folder").text = "images"
+    ET.SubElement(annotation, "filename").text = img_name
+    ET.SubElement(annotation, "path").text = img_path
 
-        if xmin < 0 or ymin < 0 or xmax > w or ymax > h or xmin >= xmax or ymin >= ymax:
-            print(f"[BŁĘDNY BOX] {img_name}")
-            errors += 1
+    size = ET.SubElement(annotation, "size")
+    ET.SubElement(size, "width").text = str(width)
+    ET.SubElement(size, "height").text = str(height)
+    ET.SubElement(size, "depth").text = str(depth)
 
-if errors == 0:
-    print("Walidacja zakończona: brak błędów ✅")
-else:
-    print(f"Wykryto {errors} problemów ❌")
+    ET.SubElement(annotation, "segmented").text = "0"
+
+    tree = ET.ElementTree(annotation)
+    tree.write(xml_path, encoding="utf-8", xml_declaration=True)
+
+    created += 1
+
+print(f"Utworzono {created} pustych plików XML.")

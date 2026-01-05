@@ -5,11 +5,14 @@ __pycache__/
 # Virtual environment
 venv/
 
-# Dataset
+# Data
 dataset/images/
-dataset/labels/
 
-# System / IDE
+# Models
+*.pth
+*.pt
+
+# IDE / System
 .vscode/
 .DS_Store
 Thumbs.db

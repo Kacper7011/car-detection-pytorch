@@ -1,6 +1,8 @@
 import os
 
-IMAGE_DIR = "dataset/images_raw"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+IMAGE_DIR = os.path.join(BASE_DIR, "..", "images")
+
 PREFIX = "car"
 EXT = ".png"
 START_INDEX = 1

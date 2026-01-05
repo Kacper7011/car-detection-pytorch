@@ -1,0 +1,26 @@
+<annotation>
+	<folder>images</folder>
+	<filename>car_355.png</filename>
+	<path>C:\Users\kubac\Desktop\dataset\images_selected\images\car_355.png</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>2848</width>
+		<height>1600</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>car</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>1402</xmin>
+			<ymin>1042</ymin>
+			<xmax>1710</xmax>
+			<ymax>1309</ymax>
+		</bndbox>
+	</object>
+</annotation>
