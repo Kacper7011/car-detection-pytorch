@@ -6,7 +6,7 @@ __pycache__/
 venv/
 
 # Data
-dataset/images/
+dataset/images/.gitkeep
 
 # Models
 *.pth
