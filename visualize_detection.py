@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from dataset_pytorch import CarDataset
 
+# ======================
+# CONFIG
+# ======================
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 SCORE_THRESHOLD = 0.7
 
@@ -66,24 +69,57 @@ models["6"] = (
     model_ft
 )
 
-# Move all models to device & eval
+# Move models to device and eval mode
 for key in models:
     models[key][1].to(DEVICE)
     models[key][1].eval()
 
-# Start with fine-tuned model
+# Default model
 current_model_key = "6"
 current_model_name, current_model = models[current_model_key]
 
-
 # ======================
-# VIEWER
+# VIEWER SETUP
 # ======================
 index = 0
-fig, ax = plt.subplots(1, figsize=(12, 8))
+
+fig = plt.figure(figsize=(14, 8))
+ax_info = fig.add_axes([0.03, 0.15, 0.25, 0.7])
+ax_info.axis("off")
+ax_img = fig.add_axes([0.32, 0.1, 0.65, 0.8])
+
+
+# ======================
+# DRAW FUNCTIONS
+# ======================
+def draw_instructions():
+    ax_info.clear()
+    ax_info.axis("off")
+
+    instructions = (
+        "STEROWANIE:\n\n"
+        "← / →   : poprzedni / następny obraz\n\n"
+        "1       : Faster R-CNN ResNet50 (pretrained)\n"
+        "2       : RetinaNet ResNet50\n"
+        "3       : SSD300 VGG16\n"
+        "4       : FCOS ResNet50\n"
+        "5       : Faster R-CNN MobileNet\n"
+        "6       : Faster R-CNN ResNet50 (fine-tuned)\n\n"
+        "R       : odśwież obraz\n\n"
+        "Q / ESC : wyjście"
+    )
+
+    ax_info.text(
+        0.0, 1.0,
+        instructions,
+        fontsize=11,
+        va="top",
+        ha="left",
+        wrap=True
+    )
 
 def draw_image():
-    ax.clear()
+    ax_img.clear()
 
     image, _ = dataset[index]
     image_gpu = image.to(DEVICE)
@@ -94,7 +130,7 @@ def draw_image():
     boxes = output["boxes"].cpu()
     scores = output["scores"].cpu()
 
-    ax.imshow(image.permute(1, 2, 0))
+    ax_img.imshow(image.permute(1, 2, 0))
 
     for box, score in zip(boxes, scores):
         if score < SCORE_THRESHOLD:
@@ -108,15 +144,20 @@ def draw_image():
             edgecolor="red",
             facecolor="none"
         )
-        ax.add_patch(rect)
-        ax.text(x1, y1 - 5, f"{score:.2f}", color="red", fontsize=9)
+        ax_img.add_patch(rect)
+        ax_img.text(x1, y1 - 5, f"{score:.2f}", color="red", fontsize=9)
 
-    ax.set_title(
-        f"{current_model_name} | obraz {index+1}/{len(dataset)}"
+    ax_img.set_title(
+        f"{current_model_name} | obraz {index + 1}/{len(dataset)}"
     )
-    ax.axis("off")
+    ax_img.axis("off")
+
+    draw_instructions()
     fig.canvas.draw_idle()
 
+# ======================
+# KEYBOARD HANDLER
+# ======================
 def on_key(event):
     global index, current_model_key, current_model, current_model_name
 
@@ -139,7 +180,9 @@ def on_key(event):
     elif event.key in ["escape", "q"]:
         plt.close(fig)
 
+# ======================
+# RUN
+# ======================
 fig.canvas.mpl_connect("key_press_event", on_key)
-
 draw_image()
 plt.show()

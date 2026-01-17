@@ -1,18 +1,26 @@
 # Python
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 
 # Virtual environment
 venv/
+ENV/
+.env
 
 # Data
-dataset/images/.gitkeep
+# Ignoruj wszystko w images, ale zachowaj sam folder przez .gitkeep
+dataset/images/*
+!dataset/images/.gitkeep
 
 # Models
 *.pth
 *.pt
+*.checkpoint
 
 # IDE / System
 .vscode/
+.idea/
 .DS_Store
 Thumbs.db
