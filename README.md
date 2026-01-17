@@ -23,6 +23,11 @@ Wagi modelu dostępne są pod adresem:
 
 https://1drv.ms/f/c/f17a058064cc30a5/IgDjzZgmRuVfQqSY06xwSQyZATFQYUDsO7APtQxonGqvOHU?e=eZdMNK
 
+## Zbiór obrazów
+Zbiór zdjęć użytych do etykietowania i testów dostępny jest pod adresem:
+
+https://anselbpl-my.sharepoint.com/:f:/g/personal/21560_student_ans-elblag_pl/IgAKJB_Wa0K8QqCW4Z3f19pGAVke5rv99RFKlyjvUDJF-Sg?e=btfTyo
+
 ## Odtworzenie projektu
 
 Aby odtworzyć projekt na własnym środowisku, należy przygotować zbiór danych oraz wykonać kilka kroków wstępnych.
