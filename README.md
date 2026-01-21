@@ -23,6 +23,10 @@ Wagi modelu dostępne są pod adresem:
 
 https://1drv.ms/f/c/f17a058064cc30a5/IgDjzZgmRuVfQqSY06xwSQyZATFQYUDsO7APtQxonGqvOHU?e=eZdMNK
 
+Po pobraniu pliku z wagami modelu należy umieścić go bezpośrednio w katalogu głównym projektu
+aby możliwe było jego użycie w skryptach treningowych
+oraz wizualizacyjnych.
+
 ## Zbiór obrazów
 Zbiór zdjęć użytych do etykietowania i testów dostępny jest pod adresem:
 
@@ -33,10 +37,11 @@ https://anselbpl-my.sharepoint.com/:f:/g/personal/21560_student_ans-elblag_pl/Ig
 Aby odtworzyć projekt na własnym środowisku, należy przygotować zbiór danych oraz wykonać kilka kroków wstępnych.
 
 ### Przygotowanie danych
-1. Należy umieścić minimum 300 obrazów w katalogu:
-`dataset/images`
+1. Należy umieścić minimum 300 obrazów w katalogu:  
+   `dataset/images`
 
-2. Zdjęcia powinny przedstawiać sceny drogowe, na których występują samochody (klasa etykietowana w projekcie).
+2. Zdjęcia powinny przedstawiać sceny drogowe, na których występują samochody
+   (klasa etykietowana w projekcie).
 
 ### Obróbka zbioru danych (folder `utilities`)
 Do przygotowania zbioru danych wykorzystano własne skrypty pomocnicze:
@@ -72,6 +77,7 @@ python -m venv venv
 source venv/bin/activate   # Linux / macOS
 venv\Scripts\activate      # Windows
 pip install -r requirements.txt
+
 ```
 
 ## Licencja
