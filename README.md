@@ -27,6 +27,27 @@ Po pobraniu pliku z wagami modelu należy umieścić go bezpośrednio w katalogu
 aby możliwe było jego użycie w skryptach treningowych
 oraz wizualizacyjnych.
 
+## Porównanie modelu przed i po fine-tuningu
+
+Poniżej przedstawiono przykładowe wyniki detekcji dla tego samego obrazu
+z wykorzystaniem modelu wstępnie wytrenowanego (pretrained)
+oraz modelu po procesie fine-tuningu.
+
+<table>
+<tr>
+<td align="center"><b>Pretrained</b></td>
+<td align="center"><b>Fine-tuned</b></td>
+</tr>
+<tr>
+<td><img src="screenshots/pretrained.png" width="100%"/></td>
+<td><img src="screenshots/finetuned.png" width="100%"/></td>
+</tr>
+</table>
+
+Na podstawie wizualizacji widać, że model po fine-tuningu generuje
+mniej błędnych detekcji oraz lepiej koncentruje się na obiektach należących
+do klasy samochód.
+
 ## Zbiór obrazów
 Zbiór zdjęć użytych do etykietowania i testów dostępny jest pod adresem:
 
